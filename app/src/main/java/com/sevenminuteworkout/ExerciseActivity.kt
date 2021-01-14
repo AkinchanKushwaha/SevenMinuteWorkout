@@ -3,6 +3,7 @@ package com.sevenminuteworkout
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
+import android.view.View.GONE
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_exercise.*
@@ -14,6 +15,8 @@ class ExerciseActivity : AppCompatActivity() {
     private var exerciseTimer: CountDownTimer? = null
     private var exerciseProgress = 0
 
+    private var exerciseList: ArrayList<ExerciseModel>? = null
+    private var currentExercisePosition = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +28,7 @@ class ExerciseActivity : AppCompatActivity() {
             onBackPressed()
         }
 
+        exerciseList = Constants.defaultExerciseList()
         setupRestView()
     }
 
@@ -41,11 +45,18 @@ class ExerciseActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+
+
+
     private fun setupRestView() {
+        llExerciseView.visibility = View.GONE
+        llRestView.visibility = View.VISIBLE
+
         if (restTimer != null) {
             restTimer!!.cancel()
             restProgress = 0
         }
+        tvUpcomingExerciseName.text = exerciseList!![currentExercisePosition+1].getName()
         setRestProgressBar()
     }
 
@@ -62,10 +73,14 @@ class ExerciseActivity : AppCompatActivity() {
             }
 
             override fun onFinish() {
+                currentExercisePosition++
                 setupExerciseView()
             }
         }.start()
     }
+
+
+
 
     private fun setupExerciseView() {
         llRestView.visibility = View.GONE
@@ -76,6 +91,8 @@ class ExerciseActivity : AppCompatActivity() {
         }
 
         setExerciseProgressBar()
+        ivImage.setImageResource(exerciseList!![currentExercisePosition].getImage())
+        tvExerciseName.text = exerciseList!![currentExercisePosition].getName()
     }
 
     private fun setExerciseProgressBar() {
@@ -90,13 +107,12 @@ class ExerciseActivity : AppCompatActivity() {
             }
 
             override fun onFinish() {
-                Toast.makeText(
-                    this@ExerciseActivity,
-                    "This is 30 seconds completed so now we will add all the exercises.",
-                    Toast.LENGTH_SHORT
-                ).show()
+                if(currentExercisePosition < exerciseList!!.size!! -1){
+                    setupRestView()
+                }else{
+                    Toast.makeText(this@ExerciseActivity, "Congratulations! you've completed the seven minute workout challenge.", Toast.LENGTH_SHORT).show()
+                }
             }
         }.start()
     }
-    // END
 }
