@@ -7,8 +7,10 @@ import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.view.View.GONE
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_exercise.*
 import org.w3c.dom.Text
 import java.lang.Exception
@@ -29,6 +31,8 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener  {
     private var tts: TextToSpeech? = null
     private var player: MediaPlayer? = null
 
+    private var exerciseAdapter : ExerciseStatusAdaptor? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_exercise)
@@ -39,9 +43,11 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener  {
             onBackPressed()
         }
         tts =TextToSpeech(this,this)
-
         exerciseList = Constants.defaultExerciseList()
         setupRestView()
+
+        setUpExerciseStatusRecyclerView()
+
     }
 
     public override fun onDestroy() {
@@ -103,6 +109,10 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener  {
 
             override fun onFinish() {
                 currentExercisePosition++
+
+                exerciseList!![currentExercisePosition].setIsSelected(true)
+                exerciseAdapter!!.notifyDataSetChanged()
+
                 setupExerciseView()
             }
         }.start()
@@ -138,6 +148,9 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener  {
 
             override fun onFinish() {
                 if(currentExercisePosition < exerciseList!!.size!! -1){
+                    exerciseList!![currentExercisePosition].setIsSelected(false)
+                    exerciseList!![currentExercisePosition].setIsCompleted(true)
+                    exerciseAdapter!!.notifyDataSetChanged()
                     setupRestView()
                 }else{
                     Toast.makeText(this@ExerciseActivity, "Congratulations! you've completed the seven minute workout challenge.", Toast.LENGTH_SHORT).show()
@@ -159,4 +172,12 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener  {
     private fun speakOut(text: String){
         tts!!.speak(text,TextToSpeech.QUEUE_FLUSH,   null,"")
     }
+
+    private fun setUpExerciseStatusRecyclerView(){
+        rvExerciseStatus.layoutManager = LinearLayoutManager(this,
+                LinearLayoutManager.HORIZONTAL, false)
+        exerciseAdapter = ExerciseStatusAdaptor(exerciseList!!,this)
+        rvExerciseStatus.adapter = exerciseAdapter
+    }
+
 }
