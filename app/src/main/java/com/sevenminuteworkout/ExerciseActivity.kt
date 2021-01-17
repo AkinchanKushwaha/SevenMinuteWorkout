@@ -1,5 +1,6 @@
 package com.sevenminuteworkout
 
+import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -153,7 +154,9 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener  {
                     exerciseAdapter!!.notifyDataSetChanged()
                     setupRestView()
                 }else{
-                    Toast.makeText(this@ExerciseActivity, "Congratulations! you've completed the seven minute workout challenge.", Toast.LENGTH_SHORT).show()
+                    finish()
+                    val intent = Intent(this@ExerciseActivity, FinishActivity::class.java)
+                    startActivity(intent)
                 }
             }
         }.start()
