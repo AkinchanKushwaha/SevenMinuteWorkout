@@ -10,8 +10,8 @@ import java.math.RoundingMode
 
 class BMIActivity : AppCompatActivity() {
 
-    val METRIC_UNITS_VIEW = "METRIC_UNIT_VIEW"
-    val US_UNITS_VIEW = "US_UNIT_VIEW"
+    private val METRIC_UNITS_VIEW = "METRIC_UNIT_VIEW"
+    private val US_UNITS_VIEW = "US_UNIT_VIEW"
 
     var currentVisibleView : String = METRIC_UNITS_VIEW
 
@@ -89,7 +89,6 @@ class BMIActivity : AppCompatActivity() {
         llUsUnitHeight.visibility = View.VISIBLE
 
         llDisplayBMIResult.visibility = View.GONE
-
 
     }
 

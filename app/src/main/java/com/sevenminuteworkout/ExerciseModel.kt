@@ -37,6 +37,4 @@ class ExerciseModel(private var id: Int,
         this.isSelected = isSelected
     }
 
-
-
 }
